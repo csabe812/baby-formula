@@ -1,0 +1,31 @@
+<div class="container p-3">
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <button type="button" class="btn btn-primary w-100" routerLink="/add">Add</button>
+        </div>
+        <div class="col-md-6">
+            <button type="button" class="btn btn-primary w-100" routerLink="/history">History</button>
+        </div>
+    </div>
+    <div class="row text-center" *ngIf="data$ | async as data">
+        <h3>Today's taken <span *ngIf="sumTaken > 0">{{sumTaken}} ml</span></h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">HH:MM</th>
+                        <th scope="col">Taken</th>
+                        <th scope="col">Other</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of data; index as i">
+                        <th scope="row">{{i+1}}</th>
+                        <td>{{row.timeAndMinutes}}</td>
+                        <td>{{row.taken}} ml</td>
+                        <td>{{row.other}}</td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+</div>
