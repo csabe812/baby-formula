@@ -24,9 +24,9 @@ export class AddComponent implements OnDestroy {
   addDataSubscription?: Subscription;
 
   form: FormGroup = new FormGroup({
-    timeAndMinutes: new FormControl('', [Validators.required]),
-    taken: new FormControl('', [Validators.required]),
-    other: new FormControl('', [Validators.required]),
+    timeAndMinutes: new FormControl(),
+    taken: new FormControl(),
+    other: new FormControl(),
   });
 
   constructor(private dataService: DataService) {}
@@ -39,7 +39,7 @@ export class AddComponent implements OnDestroy {
     const data: FormulaData = {
       recorded: new Date(),
       timeAndMinutes: this.form.controls.timeAndMinutes.value ?? '',
-      taken: this.form.controls.taken.value ?? '',
+      taken: this.form.controls.taken.value ?? 0,
       other: this.form.controls.other.value ?? '',
     };
     this.addDataSubscription = this.dataService

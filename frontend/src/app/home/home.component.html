@@ -21,9 +21,9 @@
                 <tbody>
                     <tr *ngFor="let row of data; index as i">
                         <th scope="row">{{i+1}}</th>
-                        <td>{{row.timeAndMinutes}}</td>
-                        <td>{{row.taken}} ml</td>
-                        <td>{{row.other}}</td>
+                        <td>{{row.timeAndMinutes | noData}}</td>
+                        <td>{{row.taken | noData}} ml</td>
+                        <td>{{row.other | noData}}</td>
                     </tr>
                 </tbody>
             </table>

@@ -5,11 +5,12 @@ import { DataService } from '../services/data.service';
 import { Observable, map, of } from 'rxjs';
 import { FormulaData } from '../model/formula-data';
 import { HttpClientModule } from '@angular/common/http';
+import { NoDataPipe } from '../pipe/no-data.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, AsyncPipe, HttpClientModule],
+  imports: [CommonModule, RouterLink, AsyncPipe, HttpClientModule, NoDataPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   providers: [DataService],

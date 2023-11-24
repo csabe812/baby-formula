@@ -32,16 +32,16 @@ app.post("/add", (req, res, next) => {
   const db = new sqlite3.Database(dbName);
   db.serialize(() => {
     db.run(
-      "CREATE TABLE IF NOT EXISTS babyformula([id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,[recorded] NVARCHAR(120), [timeandminutes] NVARCHAR(5), [taken] INT, [other] NVARCHAR(200))"
+      "CREATE TABLE IF NOT EXISTS babyformula([id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,[recorded] NVARCHAR(120), [timeAndMinutes] NVARCHAR(5), [taken] INT, [other] NVARCHAR(200))"
     );
 
     const recorded = moment(new Date(req.body.recorded)).format(
       "YYYY-MM-DD HH:mm"
     );
-    const timeandminutes = req.body.timeAndMinutes;
+    const timeAndMinutes = req.body.timeAndMinutes;
     const taken = req.body.taken;
     const other = req.body.other;
-    const sql = `INSERT INTO babyformula (recorded,timeandminutes, taken, other) VALUES  ('${recorded}', '${timeandminutes}',${taken},'${other}')`;
+    const sql = `INSERT INTO babyformula (recorded,timeAndMinutes, taken, other) VALUES  ('${recorded}', '${timeAndMinutes}',${taken},'${other}')`;
     db.run(sql);
     res.status(200).send({ text: "Added" });
   });
