@@ -22,8 +22,10 @@ import { FormulaData } from '../model/formula-data';
 })
 export class AddComponent implements OnDestroy {
   addDataSubscription?: Subscription;
+  today: string = new Date().toISOString().split('T')[0];
 
   form: FormGroup = new FormGroup({
+    recorded: new FormControl(this.today),
     timeAndMinutes: new FormControl(),
     taken: new FormControl(),
     other: new FormControl(),
@@ -37,7 +39,7 @@ export class AddComponent implements OnDestroy {
 
   saveData(): void {
     const data: FormulaData = {
-      recorded: new Date(),
+      recorded: this.form.controls.recorded.value ?? this.today,
       timeAndMinutes: this.form.controls.timeAndMinutes.value ?? '',
       taken: this.form.controls.taken.value ?? 0,
       other: this.form.controls.other.value ?? '',
@@ -46,6 +48,7 @@ export class AddComponent implements OnDestroy {
       .addData(data)
       .subscribe((resp) => {
         this.form.reset();
+        this.form.controls.recorded.setValue(this.today);
       });
   }
 }

@@ -1,5 +1,6 @@
 export type FormulaData = {
-  recorded: Date;
+  id?: number;
+  recorded: string;
   timeAndMinutes: string;
   taken: number;
   other: string;
