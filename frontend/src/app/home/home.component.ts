@@ -34,7 +34,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.sumTaken = 0;
     this.data$ = this.dataService.fetchDataByDate(new Date()).pipe(
       map((m) => {
-        console.log(m);
         for (let i of m) {
           this.sumTaken += i.taken;
         }
@@ -47,7 +46,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.deleteSubscription = this.dataService
       .deleteById(id)
       .subscribe((data) => {
-        console.log(data);
         this.fetchData();
       });
   }

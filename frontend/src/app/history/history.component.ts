@@ -46,7 +46,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.deleteSubscription = this.dataService
       .deleteById(id)
       .subscribe((data) => {
-        console.log(data);
         this.fetchData();
       });
   }
