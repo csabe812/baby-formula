@@ -33,7 +33,6 @@ app.post("/add", (req, res, next) => {
     );
 
     const d = new Date(req.body.recorded);
-    console.log(d.toLocaleString());
     const recorded = req.body.recorded;
     const timeAndMinutes = req.body.timeAndMinutes;
     const taken = req.body.taken;
