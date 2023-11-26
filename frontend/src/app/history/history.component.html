@@ -1,4 +1,4 @@
-<div class="container" *ngIf="data$ | async as data">
+<div class="container p-3" *ngIf="data$ | async as data">
     <button class="btn btn-secondary w-100" routerLink="/">Back</button>
     <div class="row text-center mt-3" *ngFor="let i of data">
         <h3>{{i.dateKey}}</h3>
