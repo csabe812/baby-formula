@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
 import { DataService } from '../services/data.service';
@@ -20,9 +20,10 @@ import { FormulaData } from '../model/formula-data';
   styleUrl: './add.component.scss',
   providers: [DataService],
 })
-export class AddComponent implements OnDestroy {
+export class AddComponent implements OnInit, OnDestroy {
   addDataSubscription?: Subscription;
   today: string = new Date().toISOString().split('T')[0];
+  id?: number;
 
   form: FormGroup = new FormGroup({
     recorded: new FormControl(this.today),
@@ -31,7 +32,20 @@ export class AddComponent implements OnDestroy {
     other: new FormControl(),
   });
 
-  constructor(private dataService: DataService) {}
+  constructor(
+    private dataService: DataService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.activatedRoute.params.subscribe((params) => {
+      this.id = +params['id'];
+      this.dataService.getById(this.id).subscribe((data) => {
+        this.form.patchValue(data);
+      });
+    });
+  }
 
   ngOnDestroy(): void {
     this.addDataSubscription?.unsubscribe();
@@ -44,11 +58,20 @@ export class AddComponent implements OnDestroy {
       taken: this.form.controls.taken.value ?? 0,
       other: this.form.controls.other.value ?? '',
     };
-    this.addDataSubscription = this.dataService
-      .addData(data)
-      .subscribe((resp) => {
-        this.form.reset();
-        this.form.controls.recorded.setValue(this.today);
-      });
+    if (this.id) {
+      data.id = this.id;
+      this.addDataSubscription = this.dataService
+        .modifyData(data)
+        .subscribe((resp) => {
+          this.router.navigate(['/']);
+        });
+    } else {
+      this.addDataSubscription = this.dataService
+        .addData(data)
+        .subscribe((resp) => {
+          this.form.reset();
+          this.form.controls.recorded.setValue(this.today);
+        });
+    }
   }
 }

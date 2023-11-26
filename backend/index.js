@@ -20,7 +20,7 @@ app.use((req, res, next) => {
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
+    "GET, POST, PUT, DELETE, OPTIONS"
   );
   next();
 });
@@ -85,6 +85,24 @@ app.get("/history", (req, res, next) => {
   });
 });
 
+app.get("/getById/:id", (req, res, next) => {
+  const db = new sqlite3.Database(dbName);
+  db.serialize(() => {
+    db.each(
+      "SELECT * FROM babyformula WHERE id =?",
+      [req.params.id],
+      function (err, row) {
+        if (err) {
+          res.send("Error encountered while displaying");
+          return console.error(err.message);
+        }
+        res.status(200).send(row);
+        console.log("Entry displayed successfully");
+      }
+    );
+  });
+});
+
 app.delete("/delete/:id", (req, res, next) => {
   const db = new sqlite3.Database(dbName);
   db.serialize(() => {
@@ -96,6 +114,21 @@ app.delete("/delete/:id", (req, res, next) => {
         return console.error(err.message);
       }
       res.status(200).send({ text: "Data deleted!" });
+    });
+  });
+});
+
+app.put("/fetchById", (req, res, next) => {
+  const db = new sqlite3.Database(dbName);
+  db.serialize(() => {
+    const sql = `update babyformula set recorded="${req.body.recorded}", timeAndMinutes="${req.body.timeAndMinutes}", taken=${req.body.taken}, other="${req.body.other}" where id=${req.body.id};`;
+    console.log(sql);
+    db.run(sql, function (err) {
+      if (err) {
+        res.status(400).send({ text: "Error encountered while displaying" });
+        return console.error(err.message);
+      }
+      res.status(200).send({ text: "Data edited!" });
     });
   });
 });

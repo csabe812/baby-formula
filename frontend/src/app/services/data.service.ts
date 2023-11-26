@@ -2,17 +2,26 @@ import { Injectable } from '@angular/core';
 import { FormulaData } from '../model/formula-data';
 import { HttpClient } from '@angular/common/http';
 import { ResponseData } from '../model/response-data';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
-  url: string = 'http://localhost:3000/';
+  url: string = environment.url;
 
   constructor(private http: HttpClient) {}
 
   addData(data: FormulaData) {
     return this.http.post<FormulaData>(this.url + 'add', data);
+  }
+
+  getById(id: number) {
+    return this.http.get<FormulaData>(this.url + `getById/${id}`);
+  }
+
+  modifyData(data: FormulaData) {
+    return this.http.put<ResponseData>(this.url + `fetchById`, data);
   }
 
   fetchData() {
