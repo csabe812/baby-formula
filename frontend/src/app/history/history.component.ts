@@ -35,7 +35,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
         const data: { dateKey: string; data: FormulaData[] }[] = [];
         const dates = [...new Set(d.map((m) => m.recorded))].sort().reverse();
         for (let i of dates) {
-          data.push({ dateKey: i, data: d.filter((f) => f.recorded === i) });
+          const filteredData = d.filter((f) => f.recorded === i);
+          const key =
+            i +
+            ', ' +
+            filteredData.reduce((acc, curr) => acc + curr.taken, 0) +
+            ' ml';
+          data.push({ dateKey: key, data: filteredData });
         }
         return data;
       })
