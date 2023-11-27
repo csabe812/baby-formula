@@ -133,6 +133,41 @@ app.put("/fetchById", (req, res, next) => {
   });
 });
 
+app.post("/add-general-comment", (req, res, next) => {
+  const db = new sqlite3.Database(dbName);
+  db.serialize(() => {
+    db.run(
+      "CREATE TABLE IF NOT EXISTS comment([id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,[content] NVARCHAR(250),[recorded] NVARCHAR(10))"
+    );
+    const content = req.body.content;
+    const recorded = req.body.recorded;
+    const sql = `INSERT INTO comment (content,recorded) VALUES  ('${content}','${recorded}')`;
+    db.run(sql);
+    res.status(200).send({ text: "Added" });
+  });
+});
+
+app.get("/get-comment-by-recorded/:recorded", (req, res, next) => {
+  const db = new sqlite3.Database(dbName);
+  db.serialize(() => {
+    const data = [];
+    db.each(
+      "SELECT * FROM comment WHERE recorded =?",
+      [req.params.recorded],
+      function (err, row) {
+        if (err) {
+          res.send("Error encountered while displaying");
+          return console.error(err.message);
+        }
+        data.push(row);
+      },
+      function (err, counter) {
+        res.status(200).send(data);
+      }
+    );
+  });
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

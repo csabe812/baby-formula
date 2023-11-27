@@ -8,7 +8,7 @@ import {
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DataService } from '../services/data.service';
-import { Observable, Subscription, map, of } from 'rxjs';
+import { EMPTY, Observable, Subscription, map, of } from 'rxjs';
 import { FormulaData } from '../model/formula-data';
 import { HttpClientModule } from '@angular/common/http';
 import { NoDataPipe } from '../pipe/no-data.pipe';
@@ -17,6 +17,8 @@ import {
   NgbDatepickerModule,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
+import { Comment } from '../model/comment';
+import { CommentService } from '../services/comment.service';
 
 @Component({
   selector: 'app-home',
@@ -31,19 +33,25 @@ import {
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  providers: [DataService],
+  providers: [DataService, CommentService],
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private modalService = inject(NgbModal);
   closeResult = '';
 
-  data$: Observable<FormulaData[]> = of([]);
+  data$: Observable<{
+    formulaData: FormulaData[];
+    comment: Observable<Comment[]>;
+  }> = of({ formulaData: [], comment: of() });
   sumTaken = 0;
   deleteSubscription?: Subscription;
 
   id?: number;
 
-  constructor(private dataService: DataService) {}
+  constructor(
+    private dataService: DataService,
+    private commentService: CommentService
+  ) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -57,12 +65,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.sumTaken = 0;
     this.data$ = this.dataService.fetchDataByDate(new Date()).pipe(
       map((m) => {
+        const recorded = m.length > 0 ? m[0].recorded : '';
         for (let i of m) {
           this.sumTaken += i.taken;
         }
-        return m;
+        return {
+          formulaData: m,
+          comment: this.getCommentByRecorded(recorded),
+        };
       })
     );
+  }
+
+  getCommentByRecorded(recorded: string): Observable<Comment[]> {
+    return this.commentService.getByRecorded(recorded);
   }
 
   deleteData() {

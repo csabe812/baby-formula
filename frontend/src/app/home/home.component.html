@@ -1,50 +1,63 @@
 <div class="container p-3">
     <div class="row g-3 mb-3">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <button type="button" class="btn btn-primary w-100" routerLink="/add">Add</button>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <button type="button" class="btn btn-primary w-100" routerLink="/add-comment">Add comment</button>
+        </div>
+        <div class="col-md-4">
             <button type="button" class="btn btn-primary w-100" routerLink="/history">History</button>
         </div>
     </div>
-    <div class="row text-center" *ngIf="data$ | async as data">
-        <h3>Today's taken <span *ngIf="sumTaken > 0">{{sumTaken}} ml</span></h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">HH:MM</th>
-                    <th scope="col">Taken</th>
-                    <th scope="col">Other</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let row of data; index as i">
-                    <th scope="row">{{i+1}}</th>
-                    <td>{{row.timeAndMinutes | noData}}</td>
-                    <td>{{row.taken | noData}} ml</td>
-                    <td>{{row.other | noData}}</td>
-                    <td>
-                        <button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]"><i
-                                class="bi bi-pencil-square"></i></button>
-                        <button type="button" class="btn btn-danger" (click)="open(content, row.id!);"><i
-                                class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div *ngIf="data$ | async as data">
+        <div class="row text-center">
+            <h3>Today's taken <span *ngIf="sumTaken > 0">{{sumTaken}} ml</span></h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">HH:MM</th>
+                        <th scope="col">Taken</th>
+                        <th scope="col">Other</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of data.formulaData; index as i">
+                        <th scope="row">{{i+1}}</th>
+                        <td>{{row.timeAndMinutes | noData}}</td>
+                        <td>{{row.taken | noData}} ml</td>
+                        <td>{{row.other | noData}}</td>
+                        <td>
+                            <button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="btn btn-danger" (click)="open(content, row.id!);"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                    <ng-container *ngIf="data.comment | async as comment">
+                        <tr class="text-center" *ngIf="comment.length > 0">
+                            <td colspan="5">
+                                <ng-container *ngFor="let c of comment">
+                                    <p>{{c.content}}</p>
+                                </ng-container>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <ng-template #content let-modal>
-	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">Are you sure want to delete?</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">No</button>
-		<button type="button" class="btn btn-danger" (click)="deleteData();modal.dismiss('Cross click')">Yes</button>
-	</div>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Are you sure want to delete?</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">No</button>
+        <button type="button" class="btn btn-danger" (click)="deleteData();modal.dismiss('Cross click')">Yes</button>
+    </div>
 </ng-template>
-

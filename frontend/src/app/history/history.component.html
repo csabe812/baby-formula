@@ -23,6 +23,15 @@
                         <a class="btn btn-danger" (click)="deleteById(row.id!)"><i class="bi bi-trash"></i></a>
                     </td>
                 </tr>
+                <ng-container *ngIf="i.comment | async as comment">
+                    <tr class="text-center" *ngIf="comment.length > 0">
+                        <td colspan="5">
+                            <ng-container *ngFor="let c of comment">
+                                <p>{{c.content}}</p>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
     </div>

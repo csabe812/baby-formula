@@ -6,6 +6,8 @@ import { FormulaData } from '../model/formula-data';
 import { Observable, Subscription, map, of } from 'rxjs';
 import { NoDataPipe } from '../pipe/no-data.pipe';
 import { RouterLink } from '@angular/router';
+import { CommentService } from '../services/comment.service';
+import { Comment } from '../model/comment';
 
 @Component({
   selector: 'app-history',
@@ -13,13 +15,18 @@ import { RouterLink } from '@angular/router';
   imports: [CommonModule, HttpClientModule, AsyncPipe, NoDataPipe, RouterLink],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
-  providers: [DataService],
+  providers: [DataService, CommentService],
 })
 export class HistoryComponent implements OnInit, OnDestroy {
   deleteSubscription?: Subscription;
-  data$: Observable<{ dateKey: string; data: FormulaData[] }[]> = of([]);
+  data$: Observable<
+    { dateKey: string; data: FormulaData[]; comment: Observable<Comment[]> }[]
+  > = of([]);
 
-  constructor(private dataService: DataService) {}
+  constructor(
+    private dataService: DataService,
+    private commentService: CommentService
+  ) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -32,7 +39,11 @@ export class HistoryComponent implements OnInit, OnDestroy {
   fetchData() {
     this.data$ = this.dataService.fetchData().pipe(
       map((d) => {
-        const data: { dateKey: string; data: FormulaData[] }[] = [];
+        const data: {
+          dateKey: string;
+          data: FormulaData[];
+          comment: Observable<Comment[]>;
+        }[] = [];
         const dates = [...new Set(d.map((m) => m.recorded))].sort().reverse();
         for (let i of dates) {
           const filteredData = d.filter((f) => f.recorded === i);
@@ -41,11 +52,19 @@ export class HistoryComponent implements OnInit, OnDestroy {
             ', ' +
             filteredData.reduce((acc, curr) => acc + curr.taken, 0) +
             ' ml';
-          data.push({ dateKey: key, data: filteredData });
+          data.push({
+            dateKey: key,
+            data: filteredData,
+            comment: this.getCommentByRecorded(i),
+          });
         }
         return data;
       })
     );
+  }
+
+  getCommentByRecorded(recorded: string): Observable<Comment[]> {
+    return this.commentService.getByRecorded(recorded);
   }
 
   deleteById(id: number) {
