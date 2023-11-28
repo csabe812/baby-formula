@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormulaData } from '../model/formula-data';
 import { HttpClient } from '@angular/common/http';
 import { ResponseData } from '../model/response-data';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
