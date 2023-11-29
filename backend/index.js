@@ -1,16 +1,43 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
-const fs = require("fs");
-const sqlite3 = require("sqlite3").verbose();
+const { Sequelize, Model, DataTypes } = require("sequelize");
 
 const app = express();
 const port = 3000;
 
+// Create Sequelize instance
+const sequelize = new Sequelize({
+  dialect: "sqlite",
+  storage: "./baby-formula.db",
+});
+
+// Define Babyformula model
+class Babyformula extends Model {}
+Babyformula.init(
+  {
+    recorded: DataTypes.STRING,
+    hourAndMinutes: DataTypes.STRING,
+    taken: DataTypes.STRING,
+    other: DataTypes.STRING,
+  },
+  { sequelize, modelName: "babyformula" }
+);
+
+// Define Comment model
+class Comment extends Model {}
+Comment.init(
+  {
+    recorded: DataTypes.STRING,
+    content: DataTypes.STRING,
+  },
+  { sequelize, modelName: "comment" }
+);
+
+// Sync models with database
+sequelize.sync();
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-const dbName = "./baby-formula.db";
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -25,147 +52,88 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post("/add", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    db.run(
-      "CREATE TABLE IF NOT EXISTS babyformula([id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,[recorded] NVARCHAR(10), [timeAndMinutes] NVARCHAR(5), [taken] INT, [other] NVARCHAR(200))"
-    );
-
-    const d = new Date(req.body.recorded);
-    const recorded = req.body.recorded;
-    const timeAndMinutes = req.body.timeAndMinutes;
-    const taken = req.body.taken;
-    const other = req.body.other;
-    const sql = `INSERT INTO babyformula (recorded,timeAndMinutes, taken, other) VALUES  ('${recorded}', '${timeAndMinutes}',${taken},'${other}')`;
-    db.run(sql);
-    res.status(200).send({ text: "Added" });
-  });
+app.get("/babyformula", async (req, res) => {
+  const babyformula = await Babyformula.findAll();
+  res.json(babyformula);
 });
 
-app.get("/get-data-by-date/:date", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    const data = [];
-    const sql = `select * from babyformula where recorded="${req.params.date}"`;
-    db.each(
-      sql,
-      function (err, row) {
-        if (err) {
-          res.send("Error encountered while displaying");
-          return console.error(err.message);
-        }
-        data.push(row);
-      },
-      function (err, counter) {
-        res.status(200).send(data);
-      }
-    );
-  });
+app.get("/babyformula/:id", async (req, res) => {
+  const babyformula = await Babyformula.findByPk(req.params.id);
+  res.json(babyformula);
 });
 
-app.get("/history", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    const data = [];
-    const sql = `select * from babyformula;`;
-    db.each(
-      sql,
-      function (err, row) {
-        if (err) {
-          res.send("Error encountered while displaying");
-          return console.error(err.message);
-        }
-        data.push(row);
-      },
-      function (err, counter) {
-        res.status(200).send(data);
-      }
-    );
-  });
+app.post("/babyformula", async (req, res) => {
+  const babyformula = await Babyformula.create(req.body);
+  res.json(babyformula);
 });
 
-app.get("/getById/:id", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    db.each(
-      "SELECT * FROM babyformula WHERE id =?",
-      [req.params.id],
-      function (err, row) {
-        if (err) {
-          res.send("Error encountered while displaying");
-          return console.error(err.message);
-        }
-        res.status(200).send(row);
-        console.log("Entry displayed successfully");
-      }
-    );
-  });
+app.put("/babyformula/:id", async (req, res) => {
+  const babyformula = await Babyformula.findByPk(req.params.id);
+  if (babyformula) {
+    await babyformula.update(req.body);
+    res.json(babyformula);
+  } else {
+    res.status(404).json({ message: "Babyformula not found" });
+  }
 });
 
-app.delete("/delete/:id", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    const data = [];
-    const sql = `delete from babyformula where id=${req.params.id};`;
-    db.run(sql, function (err) {
-      if (err) {
-        res.status(400).send({ text: "Error encountered while displaying" });
-        return console.error(err.message);
-      }
-      res.status(200).send({ text: "Data deleted!" });
-    });
-  });
+app.delete("/babyformula/:id", async (req, res) => {
+  const babyformula = await Babyformula.findByPk(req.params.id);
+  if (babyformula) {
+    await babyformula.destroy();
+    res.json({ message: "Babyformula deleted" });
+  } else {
+    res.status(404).json({ message: "Babyformula not found" });
+  }
 });
 
-app.put("/fetchById", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    const sql = `update babyformula set recorded="${req.body.recorded}", timeAndMinutes="${req.body.timeAndMinutes}", taken=${req.body.taken}, other="${req.body.other}" where id=${req.body.id};`;
-    console.log(sql);
-    db.run(sql, function (err) {
-      if (err) {
-        res.status(400).send({ text: "Error encountered while displaying" });
-        return console.error(err.message);
-      }
-      res.status(200).send({ text: "Data edited!" });
-    });
+app.get("/babyformula/recorded/:recorded", async (req, res) => {
+  const babyformula = await Babyformula.findAll({
+    where: { recorded: req.params.recorded },
   });
+  res.json(babyformula);
 });
 
-app.post("/add-general-comment", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    db.run(
-      "CREATE TABLE IF NOT EXISTS comment([id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,[content] NVARCHAR(250),[recorded] NVARCHAR(10))"
-    );
-    const content = req.body.content;
-    const recorded = req.body.recorded;
-    const sql = `INSERT INTO comment (content,recorded) VALUES  ('${content}','${recorded}')`;
-    db.run(sql);
-    res.status(200).send({ text: "Added" });
-  });
+app.get("/comment", async (req, res) => {
+  const comment = await Comment.findAll();
+  res.json(comment);
 });
 
-app.get("/get-comment-by-recorded/:recorded", (req, res, next) => {
-  const db = new sqlite3.Database(dbName);
-  db.serialize(() => {
-    const data = [];
-    db.each(
-      "SELECT * FROM comment WHERE recorded =?",
-      [req.params.recorded],
-      function (err, row) {
-        if (err) {
-          res.send("Error encountered while displaying");
-          return console.error(err.message);
-        }
-        data.push(row);
-      },
-      function (err, counter) {
-        res.status(200).send(data);
-      }
-    );
+app.get("/comment/:id", async (req, res) => {
+  const comment = await Comment.findByPk(req.params.id);
+  res.json(comment);
+});
+
+app.post("/comment", async (req, res) => {
+  const comment = await Comment.create(req.body);
+  res.json(comment);
+});
+
+app.put("/comment/:id", async (req, res) => {
+  const comment = await Comment.findByPk(req.params.id);
+  if (comment) {
+    await comment.update(req.body);
+    res.json(comment);
+  } else {
+    res.status(404).json({ message: "Comment not found" });
+  }
+});
+
+app.delete("/comment/:id", async (req, res) => {
+  const comment = await Comment.findByPk(req.params.id);
+  if (comment) {
+    await comment.destroy();
+    res.json({ message: "Comment deleted" });
+  } else {
+    res.status(404).json({ message: "Comment not found" });
+  }
+});
+
+app.get("/comment/recorded/:recorded", async (req, res) => {
+  const comment = await Comment.findAll({
+    where: { recorded: req.params.recorded },
   });
+  res.json(comment);
 });
 
 app.listen(port, () => {

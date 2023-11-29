@@ -1,38 +1,46 @@
 <div class="container p-3" *ngIf="data$ | async as data">
-    <button class="btn btn-secondary w-100" routerLink="/">Back</button>
-    <div class="row text-center mt-3" *ngFor="let i of data">
-        <h3>{{i.dateKey}}</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">HH:MM</th>
-                    <th scope="col">Taken</th>
-                    <th scope="col">Other</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let row of i.data; index as i">
-                    <th scope="row">{{i+1}}</th>
-                    <td>{{row.timeAndMinutes | noData}}</td>
-                    <td>{{row.taken | noData}} ml</td>
-                    <td>{{row.other | noData}}</td>
-                    <td><button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]"><i
-                                class="bi bi-pencil-square"></i></button>
-                        <a class="btn btn-danger" (click)="deleteById(row.id!)"><i class="bi bi-trash"></i></a>
-                    </td>
-                </tr>
-                <ng-container *ngIf="i.comment | async as comment">
-                    <tr class="text-center" *ngIf="comment.length > 0">
-                        <td colspan="5">
-                            <ng-container *ngFor="let c of comment">
-                                <p>{{c.content}}</p>
-                            </ng-container>
-                        </td>
-                    </tr>
-                </ng-container>
-            </tbody>
-        </table>
-    </div>
+  <button class="btn btn-secondary w-100" routerLink="/">Back</button>
+  <div class="row text-center mt-3" *ngFor="let i of data">
+    <h3>{{ i.dateKey }}</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">HH:MM</th>
+          <th scope="col">Taken</th>
+          <th scope="col">Other</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of i.data; index as i">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ row.hourAndMinutes | noData }}</td>
+          <td>{{ row.taken | noData }} ml</td>
+          <td>{{ row.other | noData }}</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-warning"
+              [routerLink]="['/add', row.id]"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <a class="btn btn-danger" (click)="deleteById(row.id!)"
+              ><i class="bi bi-trash"></i
+            ></a>
+          </td>
+        </tr>
+        <ng-container *ngIf="i.comment | async as comment">
+          <tr class="text-center" *ngIf="comment.length > 0">
+            <td colspan="5">
+              <ng-container *ngFor="let c of comment">
+                <p>{{ c.content }}</p>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
 </div>

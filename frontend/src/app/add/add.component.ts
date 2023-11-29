@@ -27,7 +27,7 @@ export class AddComponent implements OnInit, OnDestroy {
 
   form: FormGroup = new FormGroup({
     recorded: new FormControl(this.today),
-    timeAndMinutes: new FormControl(),
+    hourAndMinutes: new FormControl(),
     taken: new FormControl(),
     other: new FormControl(),
   });
@@ -41,7 +41,7 @@ export class AddComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
       this.id = +params['id'];
-      this.dataService.getById(this.id).subscribe((data) => {
+      this.dataService.findByPk(this.id).subscribe((data) => {
         this.form.patchValue(data);
       });
     });
@@ -54,20 +54,20 @@ export class AddComponent implements OnInit, OnDestroy {
   saveData(): void {
     const data: FormulaData = {
       recorded: this.form.controls.recorded.value ?? this.today,
-      timeAndMinutes: this.form.controls.timeAndMinutes.value ?? '',
+      hourAndMinutes: this.form.controls.hourAndMinutes.value ?? '',
       taken: this.form.controls.taken.value ?? 0,
       other: this.form.controls.other.value ?? '',
     };
     if (this.id) {
       data.id = this.id;
       this.addDataSubscription = this.dataService
-        .modifyData(data)
+        .put(data)
         .subscribe((resp) => {
           this.router.navigate(['/']);
         });
     } else {
       this.addDataSubscription = this.dataService
-        .addData(data)
+        .create(data)
         .subscribe((resp) => {
           this.form.reset();
           this.form.controls.recorded.setValue(this.today);
@@ -76,20 +76,19 @@ export class AddComponent implements OnInit, OnDestroy {
   }
 
   onKeyupEvent(event: any) {
-    let timeAndMinutes = this.form.controls.timeAndMinutes.value;
-    if (timeAndMinutes) {
-      if (timeAndMinutes.length > 4) {
-        this.form.controls.timeAndMinutes.patchValue('');
+    let hourAndMinutes = this.form.controls.hourAndMinutes.value;
+    if (hourAndMinutes) {
+      if (hourAndMinutes.length > 4) {
+        this.form.controls.hourAndMinutes.patchValue('');
         return;
       }
-      timeAndMinutes = ('' + timeAndMinutes).replace(':', '');
-      console.log(timeAndMinutes);
-      if (timeAndMinutes.length === 3) {
-        timeAndMinutes = '0' + timeAndMinutes;
+      hourAndMinutes = ('' + hourAndMinutes).replace(':', '');
+      if (hourAndMinutes.length === 3) {
+        hourAndMinutes = '0' + hourAndMinutes;
       }
-      const firstPart = timeAndMinutes.slice(0, 2);
-      const secondPart = timeAndMinutes.slice(2, 4);
-      this.form.controls.timeAndMinutes.patchValue(
+      const firstPart = hourAndMinutes.slice(0, 2);
+      const secondPart = hourAndMinutes.slice(2, 4);
+      this.form.controls.hourAndMinutes.patchValue(
         firstPart + ':' + secondPart
       );
     }

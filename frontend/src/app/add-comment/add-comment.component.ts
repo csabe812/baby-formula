@@ -36,7 +36,7 @@ export class AddCommentComponent implements OnDestroy {
       content: this.form.controls.content.value ?? '',
     };
     this.addCommentSubscription = this.commentService
-      .addComment(comment)
+      .create(comment)
       .subscribe(() => {
         this.router.navigate(['/']);
       });

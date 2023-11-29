@@ -7,19 +7,31 @@ import { Comment } from '../model/comment';
   providedIn: 'root',
 })
 export class CommentService {
-  url: string = environment.url;
+  url: string = environment.url + 'comment';
 
   constructor(private http: HttpClient) {}
 
-  addComment(data: Comment) {
-    console.log(data);
+  findAll() {
+    return this.http.get<Comment[]>(this.url);
+  }
 
-    return this.http.post<Comment>(this.url + 'add-general-comment', data);
+  findByPk(id: number) {
+    return this.http.get<Comment>(this.url + `/${id}`);
+  }
+
+  create(data: Comment) {
+    return this.http.post<Comment>(this.url, data);
+  }
+
+  put(data: Comment) {
+    return this.http.put<Comment>(this.url + `/${data.id}`, data);
+  }
+
+  delete(id: number) {
+    return this.http.delete<Comment>(this.url + `/${id}`);
   }
 
   getByRecorded(recorded: string) {
-    return this.http.get<Comment[]>(
-      this.url + `get-comment-by-recorded/${recorded}`
-    );
+    return this.http.get<Comment[]>(this.url + `/recorded/${recorded}`);
   }
 }

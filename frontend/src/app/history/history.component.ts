@@ -37,7 +37,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   fetchData() {
-    this.data$ = this.dataService.fetchData().pipe(
+    this.data$ = this.dataService.findAll().pipe(
       map((d) => {
         const data: {
           dateKey: string;
@@ -69,10 +69,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   deleteById(id: number) {
-    this.deleteSubscription = this.dataService
-      .deleteById(id)
-      .subscribe((data) => {
-        this.fetchData();
-      });
+    this.deleteSubscription = this.dataService.delete(id).subscribe((data) => {
+      this.fetchData();
+    });
   }
 }

@@ -63,7 +63,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   fetchData() {
     this.sumTaken = 0;
-    this.data$ = this.dataService.fetchDataByDate(new Date()).pipe(
+    this.data$ = this.dataService.getByRecorded(new Date()).pipe(
       map((m) => {
         const recorded = m.length > 0 ? m[0].recorded : '';
         for (let i of m) {
@@ -84,7 +84,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   deleteData() {
     this.deleteSubscription = this.dataService
-      .deleteById(this.id!)
+      .delete(this.id!)
       .subscribe((data) => {
         this.fetchData();
       });
