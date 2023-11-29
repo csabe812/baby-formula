@@ -76,15 +76,19 @@ export class AddComponent implements OnInit, OnDestroy {
   }
 
   onKeyupEvent(event: any) {
-    if (this.form.controls.timeAndMinutes.value) {
-      let data = this.form.controls.timeAndMinutes.value;
-      if (data.length === 3) {
-        this.form.controls.timeAndMinutes.patchValue(
-          '0' + this.form.controls.timeAndMinutes.value
-        );
+    let timeAndMinutes = this.form.controls.timeAndMinutes.value;
+    if (timeAndMinutes) {
+      if (timeAndMinutes.length > 4) {
+        this.form.controls.timeAndMinutes.patchValue('');
+        return;
       }
-      const firstPart = this.form.controls.timeAndMinutes.value.slice(0, 2);
-      const secondPart = this.form.controls.timeAndMinutes.value.slice(2, 4);
+      timeAndMinutes = ('' + timeAndMinutes).replace(':', '');
+      console.log(timeAndMinutes);
+      if (timeAndMinutes.length === 3) {
+        timeAndMinutes = '0' + timeAndMinutes;
+      }
+      const firstPart = timeAndMinutes.slice(0, 2);
+      const secondPart = timeAndMinutes.slice(2, 4);
       this.form.controls.timeAndMinutes.patchValue(
         firstPart + ':' + secondPart
       );

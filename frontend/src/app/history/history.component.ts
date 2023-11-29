@@ -64,6 +64,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   getCommentByRecorded(recorded: string): Observable<Comment[]> {
+    if (recorded.length === 0) return of([]);
     return this.commentService.getByRecorded(recorded);
   }
 
