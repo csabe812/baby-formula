@@ -10,4 +10,5 @@ export const routes: Routes = [
   { path: 'add', component: AddComponent },
   { path: 'add/:id', component: AddComponent },
   { path: 'add-comment', component: AddCommentComponent },
+  { path: 'add-comment/:id', component: AddCommentComponent },
 ];

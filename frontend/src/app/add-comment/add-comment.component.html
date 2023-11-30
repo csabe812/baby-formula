@@ -6,6 +6,9 @@
         <div class="col-md-4">
             <button type="button" class="btn btn-secondary w-100" routerLink="/">Back</button>
         </div>
+        <div class="col-md-4" *ngIf="id">
+            <button type="button" class="btn btn-danger w-100" (click)="deleteById()">Delete</button>
+        </div>
         <div class="col-md-4">
             <button type="submit" class="btn btn-primary w-100" (click)="saveComment()"
                 [disabled]="!form.valid">Save</button>

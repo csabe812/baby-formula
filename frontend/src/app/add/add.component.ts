@@ -69,8 +69,7 @@ export class AddComponent implements OnInit, OnDestroy {
       this.addDataSubscription = this.dataService
         .create(data)
         .subscribe((resp) => {
-          this.form.reset();
-          this.form.controls.recorded.setValue(this.today);
+          this.router.navigate(['/']);
         });
     }
   }
@@ -78,6 +77,12 @@ export class AddComponent implements OnInit, OnDestroy {
   onKeyupEvent(event: any) {
     let hourAndMinutes = this.form.controls.hourAndMinutes.value;
     if (hourAndMinutes) {
+      if (
+        hourAndMinutes.length === 5 &&
+        hourAndMinutes.splut(':')[0].length === 2
+      ) {
+        return;
+      }
       if (hourAndMinutes.length > 4) {
         this.form.controls.hourAndMinutes.patchValue('');
         return;
