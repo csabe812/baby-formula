@@ -1,9 +1,12 @@
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const { Sequelize, Model, DataTypes } = require("sequelize");
 
 const app = express();
 const port = 3000;
+
+app.use("/", express.static(path.join(__dirname, "frontend-build", "browser")));
 
 // Create Sequelize instance
 const sequelize = new Sequelize({
@@ -134,6 +137,10 @@ app.get("/comment/recorded/:recorded", async (req, res) => {
     where: { recorded: req.params.recorded },
   });
   res.json(comment);
+});
+
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, "frontend-build", "browser", "index.html"));
 });
 
 app.listen(port, () => {
