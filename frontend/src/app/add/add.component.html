@@ -50,9 +50,10 @@
         type="submit"
         class="btn btn-primary w-100"
         (click)="saveData()"
-        [disabled]="!form.valid"
+        [disabled]="!form.valid || (form.valid && isLoading)"
       >
-        Save
+      <span class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="isLoading"></span>
+      <span role="status">Save</span>
       </button>
     </div>
   </form>

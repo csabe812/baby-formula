@@ -55,6 +55,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.fetchData();
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        this.fetchData();
+      }
+    });
   }
 
   ngOnDestroy(): void {

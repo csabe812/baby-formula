@@ -24,6 +24,7 @@ export class AddComponent implements OnInit, OnDestroy {
   addDataSubscription?: Subscription;
   today: string = new Date().toISOString().split('T')[0];
   id?: number;
+  isLoading: boolean = false;
 
   form: FormGroup = new FormGroup({
     recorded: new FormControl(this.today),
@@ -60,15 +61,18 @@ export class AddComponent implements OnInit, OnDestroy {
     };
     if (this.id) {
       data.id = this.id;
+      this.isLoading = true;
       this.addDataSubscription = this.dataService
         .put(data)
         .subscribe((resp) => {
+          this.isLoading = false;
           this.router.navigate(['/']);
         });
     } else {
       this.addDataSubscription = this.dataService
         .create(data)
         .subscribe((resp) => {
+          this.isLoading = false;
           this.router.navigate(['/']);
         });
     }
