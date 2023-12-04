@@ -47,6 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   deleteSubscription?: Subscription;
 
   id?: number;
+  hasOtherContent: boolean = false;
 
   constructor(
     private dataService: DataService,
@@ -71,9 +72,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.data$ = this.dataService.getByRecorded(new Date()).pipe(
       map((m) => {
         const recorded = m.length > 0 ? m[0].recorded : '';
+        let otherTxt = '';
         for (let i of m) {
           this.sumTaken += i.taken;
+          otherTxt += i.other;
         }
+        this.hasOtherContent = otherTxt.length > 0;
         return {
           formulaData: m,
           comment: this.getCommentByRecorded(recorded),
