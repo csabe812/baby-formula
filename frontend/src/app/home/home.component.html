@@ -49,7 +49,7 @@
           <ng-container *ngIf="data.comment | async as comment">
             <ng-container *ngIf="comment.length > 0">
               <tr class="text-center" *ngFor="let c of comment">
-                <td colspan="4">
+                <td [colSpan]="hasOtherContent ? 4 : 3">
                   <p>{{ c.content }}</p>
                 </td>
                 <td>

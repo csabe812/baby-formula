@@ -20,8 +20,10 @@
     "@angular/router": "^17.0.0",
     "@angular/service-worker": "^17.0.0",
     "@ng-bootstrap/ng-bootstrap": "^16.0.0",
+    "@types/pulltorefreshjs": "^0.1.7",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.2",
+    "pulltorefreshjs": "^0.1.22",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
