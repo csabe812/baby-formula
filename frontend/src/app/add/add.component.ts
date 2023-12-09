@@ -83,7 +83,7 @@ export class AddComponent implements OnInit, OnDestroy {
     if (hourAndMinutes) {
       if (
         hourAndMinutes.length === 5 &&
-        hourAndMinutes.splut(':')[0].length === 2
+        hourAndMinutes.split(':')[0].length === 2
       ) {
         return;
       }
