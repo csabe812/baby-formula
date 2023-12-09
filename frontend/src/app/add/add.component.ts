@@ -53,6 +53,7 @@ export class AddComponent implements OnInit, OnDestroy {
   }
 
   saveData(): void {
+    this.isLoading = true;
     const data: FormulaData = {
       recorded: this.form.controls.recorded.value ?? this.today,
       hourAndMinutes: this.form.controls.hourAndMinutes.value ?? '',
@@ -61,7 +62,6 @@ export class AddComponent implements OnInit, OnDestroy {
     };
     if (this.id) {
       data.id = this.id;
-      this.isLoading = true;
       this.addDataSubscription = this.dataService
         .put(data)
         .subscribe((resp) => {

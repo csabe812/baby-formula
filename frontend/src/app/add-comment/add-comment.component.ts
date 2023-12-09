@@ -19,6 +19,7 @@ export class AddCommentComponent implements OnInit, OnDestroy {
   addCommentSubscription?: Subscription;
   today: string = new Date().toISOString().split('T')[0];
   id?: number;
+  isLoading: boolean = false;
 
   form: FormGroup = new FormGroup({
     recorded: new FormControl(this.today),
@@ -45,6 +46,7 @@ export class AddCommentComponent implements OnInit, OnDestroy {
   }
 
   saveComment(): void {
+    this.isLoading = true;
     const comment: Comment = {
       recorded: this.form.controls.recorded.value ?? this.today,
       content: this.form.controls.content.value ?? '',
@@ -55,12 +57,14 @@ export class AddCommentComponent implements OnInit, OnDestroy {
         .put(comment)
         .subscribe((resp) => {
           this.router.navigate(['/']);
+          this.isLoading = false;
         });
     } else {
       this.addCommentSubscription = this.commentService
         .create(comment)
         .subscribe((resp) => {
           this.router.navigate(['/']);
+          this.isLoading = false;
         });
     }
   }
