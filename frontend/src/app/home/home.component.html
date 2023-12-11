@@ -18,48 +18,52 @@
   </div>
   <div *ngIf="data$ | async as data; else loading">
     <div class="row text-center">
-      <h3>
-        Today's taken <span *ngIf="sumTaken > 0">{{ sumTaken }} ml</span>
-      </h3>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">HH:MM - Taken</th>
-            <th scope="col" *ngIf="hasOtherContent">Other</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of data.formulaData; index as i">
-            <th scope="row">{{ i + 1 }}</th>
-            <td>{{ row.hourAndMinutes | noData }} | {{ row.taken | noData }} ml</td>
-            <td *ngIf="hasOtherContent">{{ row.other | noData }}</td>
-            <td class="btn-row">
-              <button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]">
-                <i class="bi bi-pencil-square"></i>
-              </button>
-              <button type="button" class="btn btn-danger ms-1" (click)="open(content, row.id!)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-          </tr>
-          <ng-container *ngIf="data.comment | async as comment">
-            <ng-container *ngIf="comment.length > 0">
-              <tr class="text-center" *ngFor="let c of comment">
-                <td [colSpan]="hasOtherContent ? 3 : 2">
-                  <p>{{ c.content }}</p>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-warning" [routerLink]="['/add-comment', c.id]">
+      <div class="card text-center p-0">
+        <div class="card-header">
+          <h3>Today's taken <span *ngIf="sumTaken > 0">{{ sumTaken }} ml</span></h3>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-striped m-0">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">HH:MM - Taken</th>
+                <th scope="col" *ngIf="hasOtherContent">Other</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of data.formulaData; index as i">
+                <th scope="row">{{ i + 1 }}</th>
+                <td>{{ row.hourAndMinutes | noData }} | {{ row.taken | noData }} ml</td>
+                <td *ngIf="hasOtherContent">{{ row.other | noData }}</td>
+                <td class="btn-row">
+                  <button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]">
                     <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button type="button" class="btn btn-danger ms-1" (click)="open(content, row.id!)">
+                    <i class="bi bi-trash"></i>
                   </button>
                 </td>
               </tr>
-            </ng-container>
-          </ng-container>
-        </tbody>
-      </table>
+              <ng-container *ngIf="data.comment | async as comment">
+                <ng-container *ngIf="comment.length > 0">
+                  <tr class="text-center" *ngFor="let c of comment">
+                    <td [colSpan]="hasOtherContent ? 3 : 2">
+                      <p>{{ c.content }}</p>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-warning" [routerLink]="['/add-comment', c.id]">
+                        <i class="bi bi-pencil-square"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
   <ng-template #loading>
