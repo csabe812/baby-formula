@@ -17,6 +17,7 @@ import { RouterLink } from '@angular/router';
 import { CommentService } from '../services/comment.service';
 import { Comment } from '../model/comment';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-history',
@@ -40,6 +41,8 @@ export class HistoryComponent implements OnInit, OnDestroy {
   > = of([]);
   commentSub?: Subscription;
   valueChangesSub?: Subscription;
+  exportableData: { dateKey: string; data: FormulaData[]; comments: string }[] =
+    [];
 
   form: FormGroup = new FormGroup({
     searchText: new FormControl(''),
@@ -81,7 +84,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
           const filteredData = d.filter((f) => f.recorded === i);
           const key =
             i +
-            ', ' +
+            ' | ' +
             filteredData.reduce((acc, curr) => acc + curr.taken, 0) +
             ' ml';
           if (!searchText) {
@@ -89,6 +92,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
               dateKey: key,
               data: filteredData,
               comment: this.getCommentByRecorded(i, searchText),
+            });
+            this.exportableData.push({
+              dateKey: key,
+              data: filteredData,
+              comments: filteredData
+                .filter((m) => m.other.length > 0)
+                .map((m) => m.other)
+                .join(';'),
             });
           } else {
             if (
@@ -109,6 +120,15 @@ export class HistoryComponent implements OnInit, OnDestroy {
                 data: filteredData,
                 comment: this.getCommentByRecorded(i, searchText),
               });
+
+              this.exportableData.push({
+                dateKey: key,
+                data: filteredData,
+                comments: filteredData
+                  .filter((m) => m.other.length > 0)
+                  .map((m) => m.other)
+                  .join(';'),
+              });
             } else {
               this.commentSub = this.getCommentByRecorded(
                 i,
@@ -119,6 +139,16 @@ export class HistoryComponent implements OnInit, OnDestroy {
                     dateKey: key,
                     data: filteredData,
                     comment: of(resp),
+                  });
+                  let comment = filteredData
+                    .filter((m) => m.other.length > 0)
+                    .map((m) => m.other)
+                    .join(';');
+                  comment += resp.map((m) => m.content + ';');
+                  this.exportableData.push({
+                    dateKey: key,
+                    data: filteredData,
+                    comments: comment,
                   });
                 }
               });
@@ -136,7 +166,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
   ): Observable<Comment[]> {
     if (recorded.length === 0) return of([]);
     if (!searchText) {
-      return this.commentService.getByRecorded(recorded);
+      return this.commentService.getByRecorded(recorded).pipe(
+        map((m) => {
+          this.exportableData.find((f) =>
+            f.dateKey.includes(recorded)
+          )!.comments += m.map((m) => m.content).join(';');
+          return m;
+        })
+      );
     } else {
       return this.commentService.getByRecorded(recorded).pipe(
         map((d) => {
@@ -158,5 +195,28 @@ export class HistoryComponent implements OnInit, OnDestroy {
   clearText() {
     this.form.reset();
     this.fetchData();
+  }
+
+  onExportClicked(): void {
+    const header = ['Summary', 'Details', 'Comments'];
+    let csvArray: string[] = []; // = header.join(',');
+    for (let i of this.exportableData) {
+      const data = i.data
+        .map((m) => m.hourAndMinutes + ' - ' + m.taken + ' ml')
+        .join('\r\n');
+
+      const stringRow =
+        i.dateKey +
+        '\r\n' +
+        data +
+        ',' +
+        (i.comments.length === 0
+          ? '-\r\n'
+          : i.comments.replace(',', ';') + '\r\n');
+      csvArray.push(stringRow);
+    }
+
+    var blob = new Blob(csvArray, { type: 'text/csv' });
+    saveAs(blob, 'myFile.csv');
   }
 }

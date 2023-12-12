@@ -1,5 +1,6 @@
 <div class="container p-3">
   <button class="btn btn-secondary w-100" routerLink="/">Back</button>
+  <a class="btn btn-primary w-100 mt-1" (click)="onExportClicked()">Export data</a>
   <form class="input-group mt-3" [formGroup]="form">
     <input type="text" class="form-control" formControlName="searchText" placeholder="Search">
     <button class="btn btn-danger" type="button" id="button-clear" (click)="clearText()">Clear</button>
