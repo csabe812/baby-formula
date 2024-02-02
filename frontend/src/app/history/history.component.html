@@ -35,7 +35,11 @@
             <tr class="text-center" *ngIf="comment.length > 0">
               <td colspan="5">
                 <ng-container *ngFor="let c of comment">
-                  <p>{{ c.content }}</p>
+                  <p>{{ c.content }}</p> <span>
+                    <button type="button" class="btn btn-warning" [routerLink]="['/add-comment', c.id]">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </span>
                 </ng-container>
               </td>
             </tr>
