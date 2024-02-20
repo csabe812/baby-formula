@@ -44,6 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     comment: Observable<Comment[]>;
   }> = of({ formulaData: [], comment: of() });
   sumTaken = 0;
+  sumEaten = 0;
   deleteSubscription?: Subscription;
 
   id?: number;
@@ -69,12 +70,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   fetchData() {
     this.sumTaken = 0;
+    this.sumEaten = 0;
     this.data$ = this.dataService.getByRecorded(new Date()).pipe(
-      map((m) => {
+      map((d) => {
+        const m = d.sort((a, b) =>
+          a.hourAndMinutes.localeCompare(b.hourAndMinutes)
+        );
         const recorded = m.length > 0 ? m[0].recorded : '';
         let otherTxt = '';
         for (let i of m) {
           this.sumTaken += i.taken;
+          this.sumEaten += +i.eaten;
           otherTxt += i.other;
         }
         this.hasOtherContent = otherTxt.length > 0;

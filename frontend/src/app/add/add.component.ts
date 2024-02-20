@@ -30,6 +30,7 @@ export class AddComponent implements OnInit, OnDestroy {
     recorded: new FormControl(this.today),
     hourAndMinutes: new FormControl(),
     taken: new FormControl(),
+    eaten: new FormControl(),
     other: new FormControl(),
   });
 
@@ -59,6 +60,7 @@ export class AddComponent implements OnInit, OnDestroy {
       hourAndMinutes: this.form.controls.hourAndMinutes.value ?? '',
       taken: this.form.controls.taken.value ?? 0,
       other: this.form.controls.other.value ?? '',
+      eaten: this.form.controls.eaten.value ?? '',
     };
     if (this.id) {
       data.id = this.id;

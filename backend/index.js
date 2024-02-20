@@ -20,7 +20,8 @@ Babyformula.init(
   {
     recorded: DataTypes.STRING,
     hourAndMinutes: DataTypes.STRING,
-    taken: DataTypes.STRING,
+    taken: DataTypes.INTEGER,
+    eaten: DataTypes.INTEGER,
     other: DataTypes.STRING,
   },
   { sequelize, modelName: "babyformula" }

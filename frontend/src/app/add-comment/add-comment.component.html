@@ -1,7 +1,11 @@
 <div class="container p-3">
     <form class="row g-3" [formGroup]="form">
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="recorded" formControlName="recorded" placeholder="YYYY-MM-DD" />
+        </div>
         <div class="col-xs-12">
-            <textarea class="form-control" placeholder="Leave a comment here" formControlName="content" id="content" style="height: 240px"></textarea>
+            <textarea class="form-control" placeholder="Leave a comment here" formControlName="content" id="content"
+                style="height: 240px"></textarea>
         </div>
         <div class="col-md-4">
             <button type="button" class="btn btn-secondary w-100" routerLink="/">Back</button>
@@ -10,8 +14,7 @@
             <button type="button" class="btn btn-danger w-100" (click)="deleteById()">Delete</button>
         </div>
         <div class="col-md-4">
-            <button type="submit" class="btn btn-primary w-100" (click)="saveComment()"
-                [disabled]="!form.valid">
+            <button type="submit" class="btn btn-primary w-100" (click)="saveComment()" [disabled]="!form.valid">
                 <span class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="isLoading"></span>
                 <span class="ms-2" role="status">Save</span>
             </button>

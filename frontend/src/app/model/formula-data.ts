@@ -3,6 +3,7 @@ export type FormulaData = {
   recorded: string;
   hourAndMinutes: string;
   taken: number;
+  eaten: number;
   other: string;
   createdAt?: Date;
   updatedAt?: Date;

@@ -20,7 +20,8 @@
     <div class="row text-center">
       <div class="card text-center p-0">
         <div class="card-header">
-          <h3>Today's taken <span *ngIf="sumTaken > 0">{{ sumTaken }} ml</span></h3>
+          <h3><span *ngIf="sumTaken > 0">Taken 🍼 {{ sumTaken }} ml</span></h3>
+          <h3><span *ngIf="sumEaten > 0">Eaten 🥗 {{ sumEaten }} gr</span></h3>
         </div>
         <div class="card-body p-0">
           <table class="table table-striped m-0">
@@ -35,7 +36,7 @@
             <tbody>
               <tr *ngFor="let row of data.formulaData; index as i">
                 <th scope="row">{{ i + 1 }}</th>
-                <td>{{ row.hourAndMinutes | noData }} | {{ row.taken | noData }} ml</td>
+                <td>{{ row.hourAndMinutes | noData }} | {{ row.taken | noData }} ml<span *ngIf="row.eaten"> + {{row.eaten}} gr</span></td>
                 <td *ngIf="hasOtherContent">{{ row.other | noData }}</td>
                 <td class="btn-row">
                   <button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]">
