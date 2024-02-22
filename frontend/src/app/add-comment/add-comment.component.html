@@ -1,7 +1,11 @@
 <div class="container p-3">
     <form class="row g-3" [formGroup]="form">
         <div class="col-md-4">
-            <input type="text" class="form-control" id="recorded" formControlName="recorded" placeholder="YYYY-MM-DD" />
+            <input type="text" class="form-control" [class.is-invalid]="this.form.controls.recorded.invalid" id="recorded" formControlName="recorded"
+                placeholder="YYYY-MM-DD" aria-describedby="invalid-date">
+            <div id="invalid-date" class="invalid-feedback">
+                Please provide a valid date
+            </div>
         </div>
         <div class="col-xs-12">
             <textarea class="form-control" placeholder="Leave a comment here" formControlName="content" id="content"

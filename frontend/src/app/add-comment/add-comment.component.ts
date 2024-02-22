@@ -1,6 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommentService } from '../services/comment.service';
@@ -22,7 +27,10 @@ export class AddCommentComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
 
   form: FormGroup = new FormGroup({
-    recorded: new FormControl(this.today),
+    recorded: new FormControl(this.today, [
+      Validators.pattern(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/),
+      Validators.required,
+    ]),
     content: new FormControl(),
   });
 

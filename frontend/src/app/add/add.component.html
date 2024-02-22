@@ -1,56 +1,30 @@
 <div class="container p-3">
   <form class="row g-3" [formGroup]="form">
     <div class="col-md-4">
-      <input
-        type="text"
-        class="form-control"
-        id="recorded"
-        formControlName="recorded"
-        placeholder="YYYY-MM-DD"
-      />
+      <input type="text" class="form-control" [class.is-invalid]="this.form.controls.recorded.invalid" id="recorded"
+        formControlName="recorded" placeholder="YYYY-MM-DD" aria-describedby="invalid-date" />
+      <div id="invalid-date" class="invalid-feedback">
+        Please provide a valid date
+      </div>
     </div>
     <div class="col-md-4">
-      <input
-        type="text"
-        class="form-control"
-        id="hourAndMinutes"
-        formControlName="hourAndMinutes"
-        placeholder="HH:MM"
-        (focusout)="onKeyupEvent($event)"
-      />
+      <input type="text" class="form-control" id="hourAndMinutes" formControlName="hourAndMinutes" placeholder="HH:MM"
+        (focusout)="onKeyupEvent($event)" />
     </div>
     <div class="col-md-4">
       <div class="input-group">
-        <input
-          type="number"
-          class="form-control"
-          id="taken"
-          formControlName="taken"
-          placeholder="Taken"
-        />
+        <input type="number" class="form-control" id="taken" formControlName="taken" placeholder="Taken" />
         <span class="input-group-text" id="basic-addon2">ml</span>
       </div>
     </div>
     <div class="col-md-4">
       <div class="input-group">
-        <input
-          type="number"
-          class="form-control"
-          id="eaten"
-          formControlName="eaten"
-          placeholder="Eaten"
-        />
+        <input type="number" class="form-control" id="eaten" formControlName="eaten" placeholder="Eaten" />
         <span class="input-group-text" id="basic-addon2">gr</span>
       </div>
     </div>
     <div class="col-md-4">
-      <input
-        type="text"
-        class="form-control"
-        id="other"
-        formControlName="other"
-        placeholder="Other"
-      />
+      <input type="text" class="form-control" id="other" formControlName="other" placeholder="Other" />
     </div>
     <div class="col-md-4">
       <button type="button" class="btn btn-secondary w-100" routerLink="/">
@@ -58,14 +32,10 @@
       </button>
     </div>
     <div class="col-md-4">
-      <button
-        type="submit"
-        class="btn btn-primary w-100"
-        (click)="saveData()"
-        [disabled]="!form.valid || (form.valid && isLoading)"
-      >
-      <span class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="isLoading"></span>
-      <span class="ms-2" role="status">Save</span>
+      <button type="submit" class="btn btn-primary w-100" (click)="saveData()"
+        [disabled]="!form.valid || (form.valid && isLoading)">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="isLoading"></span>
+        <span class="ms-2" role="status">Save</span>
       </button>
     </div>
   </form>
