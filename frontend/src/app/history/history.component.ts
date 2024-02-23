@@ -37,12 +37,23 @@ import { saveAs } from 'file-saver';
 export class HistoryComponent implements OnInit, OnDestroy {
   deleteSubscription?: Subscription;
   data$: Observable<
-    { dateKey: string; data: FormulaData[]; comment: Observable<Comment[]> }[]
+    {
+      dateKey: string;
+      taken: number;
+      eaten: number;
+      data: FormulaData[];
+      comment: Observable<Comment[]>;
+    }[]
   > = of([]);
   commentSub?: Subscription;
   valueChangesSub?: Subscription;
-  exportableData: { dateKey: string; data: FormulaData[]; comments: string }[] =
-    [];
+  exportableData: {
+    dateKey: string;
+    taken: number;
+    eaten: number;
+    data: FormulaData[];
+    comments: string;
+  }[] = [];
 
   form: FormGroup = new FormGroup({
     searchText: new FormControl(''),
@@ -73,28 +84,32 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   fetchData(searchText?: string) {
     this.data$ = this.dataService.findAll().pipe(
-      map((d) => {
+      map((m) => {
+        const d = m.sort((a, b) =>
+          a.hourAndMinutes.localeCompare(b.hourAndMinutes)
+        );
         const data: {
           dateKey: string;
+          taken: number;
+          eaten: number;
           data: FormulaData[];
           comment: Observable<Comment[]>;
         }[] = [];
         const dates = [...new Set(d.map((m) => m.recorded))].sort().reverse();
         for (let i of dates) {
           const filteredData = d.filter((f) => f.recorded === i);
-          const key =
-            i +
-            ' | ' +
-            filteredData.reduce((acc, curr) => acc + curr.taken, 0) +
-            ' ml';
           if (!searchText) {
             data.push({
-              dateKey: key,
+              dateKey: i,
+              taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
+              eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
               data: filteredData,
               comment: this.getCommentByRecorded(i, searchText),
             });
             this.exportableData.push({
-              dateKey: key,
+              dateKey: i,
+              taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
+              eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
               data: filteredData,
               comments: filteredData
                 .filter((m) => m.other.length > 0)
@@ -103,7 +118,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
             });
           } else {
             if (
-              key.toLowerCase().includes(searchText.toLowerCase()) ||
+              i.toLowerCase().includes(searchText.toLowerCase()) ||
               filteredData.find(
                 (f) =>
                   f.hourAndMinutes
@@ -116,13 +131,17 @@ export class HistoryComponent implements OnInit, OnDestroy {
               )
             ) {
               data.push({
-                dateKey: key,
+                dateKey: i,
                 data: filteredData,
+                taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
+                eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
                 comment: this.getCommentByRecorded(i, searchText),
               });
 
               this.exportableData.push({
-                dateKey: key,
+                dateKey: i,
+                taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
+                eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
                 data: filteredData,
                 comments: filteredData
                   .filter((m) => m.other.length > 0)
@@ -136,7 +155,15 @@ export class HistoryComponent implements OnInit, OnDestroy {
               ).subscribe((resp) => {
                 if (resp.length > 0) {
                   data.push({
-                    dateKey: key,
+                    dateKey: i,
+                    taken: filteredData.reduce(
+                      (acc, curr) => acc + curr.taken,
+                      0
+                    ),
+                    eaten: filteredData.reduce(
+                      (acc, curr) => acc + curr.eaten,
+                      0
+                    ),
                     data: filteredData,
                     comment: of(resp),
                   });
@@ -146,7 +173,15 @@ export class HistoryComponent implements OnInit, OnDestroy {
                     .join(';');
                   comment += resp.map((m) => m.content + ';');
                   this.exportableData.push({
-                    dateKey: key,
+                    dateKey: i,
+                    taken: filteredData.reduce(
+                      (acc, curr) => acc + curr.taken,
+                      0
+                    ),
+                    eaten: filteredData.reduce(
+                      (acc, curr) => acc + curr.eaten,
+                      0
+                    ),
                     data: filteredData,
                     comments: comment,
                   });

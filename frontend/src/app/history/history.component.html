@@ -8,11 +8,11 @@
   <ng-container *ngIf="data$ | async as data">
     <div class="row text-center mt-3" *ngFor="let i of data">
       <h3>{{ i.dateKey }}</h3>
+      <h3 *ngIf="i.taken > 0">Taken 🍼 {{ i.taken }} ml</h3>
+      <h3 *ngIf="i.eaten > 0">Eaten 🥗 {{ i.eaten }} gr</h3>
       <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">HH:MM</th>
             <th scope="col">Taken</th>
             <th scope="col">Other</th>
             <th scope="col">Action</th>
@@ -20,9 +20,8 @@
         </thead>
         <tbody>
           <tr *ngFor="let row of i.data; index as i">
-            <th scope="row">{{ i + 1 }}</th>
-            <td>{{ row.hourAndMinutes | noData }}</td>
-            <td>{{ row.taken | noData }} ml</td>
+            <td>{{ row.hourAndMinutes | noData }} | {{ row.taken | noData }} ml<span *ngIf="row.eaten"> + {{row.eaten}}
+                gr</span></td>
             <td>{{ row.other | noData }}</td>
             <td>
               <button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]">
