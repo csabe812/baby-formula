@@ -102,14 +102,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
             data.push({
               dateKey: i,
               taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
-              eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
+              eaten: filteredData.reduce((acc, curr) => acc + +curr.eaten, 0),
               data: filteredData,
               comment: this.getCommentByRecorded(i, searchText),
             });
             this.exportableData.push({
               dateKey: i,
               taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
-              eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
+              eaten: filteredData.reduce((acc, curr) => acc + +curr.eaten, 0),
               data: filteredData,
               comments: filteredData
                 .filter((m) => m.other.length > 0)
@@ -134,14 +134,14 @@ export class HistoryComponent implements OnInit, OnDestroy {
                 dateKey: i,
                 data: filteredData,
                 taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
-                eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
+                eaten: filteredData.reduce((acc, curr) => acc + +curr.eaten, 0),
                 comment: this.getCommentByRecorded(i, searchText),
               });
 
               this.exportableData.push({
                 dateKey: i,
                 taken: filteredData.reduce((acc, curr) => acc + curr.taken, 0),
-                eaten: filteredData.reduce((acc, curr) => acc + curr.eaten, 0),
+                eaten: filteredData.reduce((acc, curr) => acc + +curr.eaten, 0),
                 data: filteredData,
                 comments: filteredData
                   .filter((m) => m.other.length > 0)
@@ -161,7 +161,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
                       0
                     ),
                     eaten: filteredData.reduce(
-                      (acc, curr) => acc + curr.eaten,
+                      (acc, curr) => acc + +curr.eaten,
                       0
                     ),
                     data: filteredData,
@@ -179,7 +179,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
                       0
                     ),
                     eaten: filteredData.reduce(
-                      (acc, curr) => acc + curr.eaten,
+                      (acc, curr) => acc + +curr.eaten,
                       0
                     ),
                     data: filteredData,
