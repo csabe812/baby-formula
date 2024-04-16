@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row my-2">
+        <h3>
+            Please note: 1 cup formula needs (~21 ml) ml water
+        </h3>
+    </div>
+    <div class="input-group mb-2">
+        <input type="number" class="form-control" id="water" placeholder="Amount of water added"
+            (input)="onWaterAmountChanged($event)">
+        <span class="input-group-text">ml</span>
+    </div>
+    <p *ngIf="numberOfCups > 0">You need {{numberOfCups}} cups of babyformula</p>
+    <div class="input-group mb-2">
+        <input type="number" class="form-control" id="extra-water" placeholder="Amount of EXTRA water added"
+            (input)="onExtraWaterAmountChanged($event)">
+        <span class="input-group-text">ml</span>
+    </div>
+    <div class="input-group mb-2">
+        <input type="number" class="form-control" id="remained-water" placeholder="Remained water"
+            (input)="onRemainedWaterAmountChanged($event)">
+        <span class="input-group-text">ml</span>
+    </div>
+    <p *ngIf="babyFormulaTaken > 0 || waterTaken > 0">Your baby taken {{babyFormulaTaken}} ml baby formula and
+        {{waterTaken}} ml water</p>
+    <button class="btn btn-primary w-100" routerLink="/">Back</button>
+</div>

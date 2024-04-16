@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -11,6 +17,7 @@ import { Subscription } from 'rxjs';
 import { CommentService } from '../services/comment.service';
 import { Comment } from '../model/comment';
 import { HttpClientModule } from '@angular/common/http';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-add-comment',
@@ -21,6 +28,9 @@ import { HttpClientModule } from '@angular/common/http';
   providers: [CommentService],
 })
 export class AddCommentComponent implements OnInit, OnDestroy {
+  private modalService = inject(NgbModal);
+  closeResult = '';
+
   addCommentSubscription?: Subscription;
   today: string = new Date().toISOString().split('T')[0];
   id?: number;
@@ -83,5 +93,29 @@ export class AddCommentComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.router.navigate(['/']);
       });
+  }
+
+  open(content: TemplateRef<any>) {
+    this.modalService
+      .open(content, { ariaLabelledBy: 'modal-basic-title' })
+      .result.then(
+        (result) => {
+          this.closeResult = `Closed with: ${result}`;
+        },
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        }
+      );
+  }
+
+  private getDismissReason(reason: any): string {
+    switch (reason) {
+      case ModalDismissReasons.ESC:
+        return 'by pressing ESC';
+      case ModalDismissReasons.BACKDROP_CLICK:
+        return 'by clicking on a backdrop';
+      default:
+        return `with: ${reason}`;
+    }
   }
 }

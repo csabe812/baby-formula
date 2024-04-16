@@ -15,6 +15,11 @@
         History
       </button>
     </div>
+    <div class="col-md-4">
+      <button type="button" class="btn btn-info w-100" routerLink="/converter">
+        Converter
+      </button>
+    </div>
   </div>
   <div *ngIf="data$ | async as data; else loading">
     <div class="row text-center">
@@ -36,7 +41,8 @@
             <tbody>
               <tr *ngFor="let row of data.formulaData; index as i">
                 <th scope="row">{{ i + 1 }}</th>
-                <td>{{ row.hourAndMinutes | noData }} | {{ row.taken | noData }} ml<span *ngIf="row.eaten"> + {{row.eaten}} gr</span></td>
+                <td>{{ row.hourAndMinutes | noData }} | {{ row.taken | noData }} ml<span *ngIf="row.eaten"> +
+                    {{row.eaten}} gr</span></td>
                 <td *ngIf="hasOtherContent">{{ row.other | noData }}</td>
                 <td class="btn-row">
                   <button type="button" class="btn btn-warning" [routerLink]="['/add', row.id]">
